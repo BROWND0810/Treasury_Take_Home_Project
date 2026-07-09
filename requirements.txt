@@ -1,7 +1,6 @@
-streamlit==1.36.0
-pandas==2.2.2
-Pillow==10.4.0
-numpy==1.26.4
-easyocr==1.7.1
-pytesseract==0.3.10
-pytest==8.2.2
+streamlit
+pandas
+Pillow
+numpy
+pytesseract
+pytest
