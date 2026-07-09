@@ -1,10 +1,35 @@
 """
 OCR helper functions.
 Uses Tesseract OCR through pytesseract.
+Supports both local Windows use and Linux deployment.
 """
 
 from PIL import Image
 from pathlib import Path
+import shutil
+
+
+def find_tesseract_path() -> str | None:
+    """
+    Find the Tesseract executable on Windows or Linux.
+    """
+
+    possible_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+        "/usr/bin/tesseract",
+        "/usr/local/bin/tesseract",
+    ]
+
+    for path in possible_paths:
+        if Path(path).exists():
+            return path
+
+    system_path = shutil.which("tesseract")
+    if system_path:
+        return system_path
+
+    return None
 
 
 def extract_text_from_image(image: Image.Image) -> str:
@@ -15,13 +40,13 @@ def extract_text_from_image(image: Image.Image) -> str:
     try:
         import pytesseract
 
-        tesseract_path = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+        tesseract_path = find_tesseract_path()
 
-        if not Path(tesseract_path).exists():
+        if not tesseract_path:
             return (
                 "OCR failed.\n\n"
-                "Tesseract error: Tesseract OCR was not found at "
-                "C:\\Program Files\\Tesseract-OCR\\tesseract.exe."
+                "Tesseract error: Tesseract OCR was not found.\n\n"
+                "Confirm that Tesseract OCR is installed locally or available in the deployment environment."
             )
 
         pytesseract.pytesseract.tesseract_cmd = tesseract_path
